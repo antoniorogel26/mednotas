@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MedNotas — Apuntes Médicos con IA</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e1a;--surface:#0f1629;--card:#141c35;--elevated:#1a2340;--hover:#1e2a4a;
+  --border:rgba(99,145,255,.13);--border2:rgba(99,145,255,.25);
+  --text:#e8eeff;--text2:#8a9bbf;--muted:#4a5878;
+  --blue:#4f8dff;--blue-glow:rgba(79,141,255,.25);--cyan:#00d4ff;
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,.12);--amber-bd:rgba(245,158,11,.3);
+  --red:#ef4444;--red-bg:rgba(239,68,68,.12);--red-bd:rgba(239,68,68,.3);
+  --btag:#60a5fa;--btag-bg:rgba(96,165,250,.12);--btag-bd:rgba(96,165,250,.3);
+  --green:#10b981;--green-bg:rgba(16,185,129,.12);
+  --radius:12px;--shadow:0 4px 24px rgba(0,0,0,.4);
+}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:var(--elevated);border-radius:99px}
+
+.app{min-height:100vh;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(79,141,255,.1) 0%,transparent 70%),var(--bg)}
+header{padding:18px 32px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--border);background:rgba(10,14,26,.85);backdrop-filter:blur(20px);position:sticky;top:0;z-index:100}
+.logo{width:38px;height:38px;background:linear-gradient(135deg,var(--blue),var(--cyan));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:19px;box-shadow:0 4px 16px rgba(79,141,255,.35);flex-shrink:0}
+h1{font-size:19px;font-weight:700;background:linear-gradient(135deg,#e8eeff,var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.subtitle{font-size:12px;color:var(--muted);margin-left:auto;font-family:monospace}
+main{max-width:1060px;margin:0 auto;padding:28px 20px;display:flex;flex-direction:column;gap:20px}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;transition:border-color .2s}
+.card:hover{border-color:var(--border2)}
+.card-hd{padding:15px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;font-size:14px;font-weight:600}
+.card-bd{padding:22px}
+
+.patient-grid{display:grid;grid-template-columns:1fr 1fr 110px;gap:14px}
+@media(max-width:580px){.patient-grid{grid-template-columns:1fr}}
+label{display:block;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+input[type=text],input[type=number],textarea{width:100%;background:var(--elevated);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;padding:9px 13px;outline:none;transition:border-color .2s,box-shadow .2s}
+input::placeholder,textarea::placeholder{color:var(--muted)}
+input:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-glow)}
+textarea{min-height:200px;resize:vertical;line-height:1.7}
+
+.tabs{display:flex;gap:4px;background:var(--surface);padding:5px;border-radius:var(--radius);border:1px solid var(--border)}
+.tab{flex:1;padding:9px 18px;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;color:var(--text2);background:transparent;display:flex;align-items:center;justify-content:center;gap:7px}
+.tab:hover{color:var(--text);background:var(--elevated)}
+.tab.active{background:linear-gradient(135deg,var(--blue),#3b6fd4);color:#fff;box-shadow:0 4px 14px rgba(79,141,255,.35)}
+.tab-panel{display:none}.tab-panel.active{display:flex;flex-direction:column;gap:20px}
+
+/* Voice */
+.waveform{background:var(--elevated);border:1px solid var(--border);border-radius:10px;height:80px;display:flex;align-items:center;justify-content:center;gap:3px;overflow:hidden}
+.bar{width:4px;border-radius:99px;background:linear-gradient(to top,var(--blue),var(--cyan));min-height:4px;transition:height .12s ease}
+.rec-controls{display:flex;align-items:center;gap:14px;margin-top:14px}
+.timer{font-family:monospace;font-size:20px;font-weight:500;min-width:70px}
+.timer.on{color:var(--red);animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+.dot{width:10px;height:10px;border-radius:50%;background:#fff;display:inline-block;margin-right:6px}
+.dot.blink{animation:blink 1s ease-in-out infinite}
+@keyframes blink{0%,100%{transform:scale(1)}50%{transform:scale(1.4);opacity:.6}}
+.interim{font-size:13px;color:var(--muted);font-style:italic;min-height:18px;margin-top:8px}
+.char-count{font-size:12px;color:var(--muted);font-family:monospace;text-align:right;margin-top:6px}
+
+/* Buttons */
+.btn-primary{display:inline-flex;align-items:center;gap:9px;padding:12px 26px;background:linear-gradient(135deg,var(--blue),#3b6fd4);color:#fff;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(79,141,255,.35)}
+.btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 22px rgba(79,141,255,.45)}
+.btn-primary:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:var(--elevated);color:var(--text);border:1px solid var(--border2);border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
+.btn-secondary:hover{background:var(--hover);border-color:var(--blue);color:var(--blue)}
+.btn-record{display:inline-flex;align-items:center;padding:11px 22px;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-record.start{background:linear-gradient(135deg,var(--red),#c0392b);color:#fff;box-shadow:0 4px 14px rgba(239,68,68,.35)}
+.btn-record.start:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(239,68,68,.45)}
+.btn-record.stop{background:var(--elevated);color:var(--text);border:1px solid var(--border2)}
+.btn-record.stop:hover{background:var(--hover)}
+.actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+
+/* Loading */
+.loading{display:flex;flex-direction:column;align-items:center;padding:56px 20px;gap:18px}
+.dots{display:flex;gap:8px}
+.dot-l{width:10px;height:10px;border-radius:50%;background:var(--blue);animation:bounce 1.2s ease-in-out infinite}
+.dot-l:nth-child(2){animation-delay:.2s}
+.dot-l:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(-12px);opacity:1}}
+.loading-txt{font-size:14px;color:var(--text2);font-style:italic}
+
+/* Summary */
+.summary{display:flex;flex-direction:column;gap:22px}
+.s-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.s-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.s-text{font-size:14px;line-height:1.75;background:var(--elevated);border:1px solid var(--border);border-radius:8px;padding:13px 15px}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:99px;font-size:12px;font-weight:500;border:1px solid}
+.tag-remove{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:rgba(0,0,0,0.1);cursor:pointer;font-size:9px;margin-left:2px;transition:all .2s;text-decoration:none;color:inherit}
+.tag-remove:hover{background:rgba(0,0,0,0.25)}
+.tag-a{background:var(--amber-bg);border-color:var(--amber-bd);color:var(--amber)}
+.tag-r{background:var(--red-bg);border-color:var(--red-bd);color:var(--red)}
+.tag-b{background:var(--btag-bg);border-color:var(--btag-bd);color:var(--btag)}
+.plan-box{background:var(--elevated);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:8px;padding:13px 15px;font-size:14px;line-height:1.75}
+.empty{text-align:center;padding:56px 20px;color:var(--muted)}
+.empty-icon{font-size:46px;margin-bottom:10px;opacity:.45}
+.error-box{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);border-radius:10px;padding:14px;color:#f87171;font-size:14px;display:flex;gap:10px}
+.fade{animation:fade .35s ease-out}
+@keyframes fade{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.success{background:var(--green-bg)!important;border-color:var(--green)!important;color:var(--green)!important}
+
+/* Top Nav */
+.top-nav{display:flex;gap:10px;margin-bottom:20px}
+.top-btn{flex:1;padding:12px;background:var(--elevated);border:1px solid var(--border);border-radius:10px;color:var(--text2);font-weight:600;font-size:14px;cursor:pointer;transition:all .2s;text-align:center}
+.top-btn:hover{background:var(--hover);color:var(--text)}
+.top-btn.active{background:linear-gradient(135deg,var(--blue),#3b6fd4);color:#fff;border-color:transparent;box-shadow:0 4px 14px rgba(79,141,255,.35)}
+
+/* History List */
+.hist-list{display:flex;flex-direction:column;gap:12px}
+.hist-item{background:var(--elevated);border:1px solid var(--border);border-radius:10px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .2s}
+.hist-item:hover{border-color:var(--blue);background:var(--hover)}
+.hist-name{font-weight:600;font-size:15px;color:var(--text);margin-bottom:4px}
+.hist-meta{font-size:12px;color:var(--text2);display:flex;gap:12px}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="logo">🩺</div>
+  <h1>MedNotas</h1>
+  <span class="subtitle">Apuntes médicos con IA · Groq / Llama 3.3</span>
+</header>
+<main>
+  <!-- Navegación Superior -->
+  <div class="top-nav">
+    <button class="top-btn active" id="nav-nuevo" onclick="switchMainView('nuevo')">➕ Nuevo Paciente</button>
+    <button class="top-btn" id="nav-historial" onclick="switchMainView('historial')">🕒 Pacientes Anteriores</button>
+  </div>
+
+  <!-- VISTA: Nuevo Paciente -->
+  <div id="view-nuevo" style="display:flex;flex-direction:column;gap:20px">
+    <div style="display:flex;justify-content:flex-end">
+      <button class="btn-secondary" onclick="clearForm()" style="font-size:12px;padding:6px 12px">🧹 Limpiar y empezar nuevo</button>
+    </div>
+    
+  <!-- Paciente -->
+  <div class="card">
+    <div class="card-hd">👤 Datos del Paciente</div>
+    <div class="card-bd">
+      <div class="patient-grid">
+        <div><label for="nombre">Nombre completo</label><input id="nombre" type="text" placeholder="Ej: María González López"/></div>
+        <div><label for="rut">RUT / ID</label><input id="rut" type="text" placeholder="Ej: 12.345.678-9"/></div>
+        <div><label for="edad">Edad</label><input id="edad" type="number" placeholder="45" min="0" max="150"/></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs" role="tablist">
+    <button class="tab active" id="tab-notas" onclick="switchTab('notas')">&#128221; Notas de consulta</button>
+    <button class="tab" id="tab-resumen" onclick="switchTab('resumen')">&#128196; Informe Cl&#237;nico</button>
+    <button class="tab" id="tab-sotero" onclick="switchTab('sotero')">&#127978; Traslado S&#243;tero del R&#237;o</button>
+    <button class="tab" id="tab-posta" onclick="switchTab('posta')">&#128680; Traslado Posta Central</button>
+  </div>
+
+  <!-- Panel Notas -->
+  <div class="tab-panel active" id="panel-notas">
+    <div class="card">
+      <div class="card-hd">🎙️ Grabación de voz</div>
+      <div class="card-bd">
+        <div class="waveform" id="waveform"></div>
+        <div class="rec-controls">
+          <span class="timer" id="timer">00:00</span>
+          <button class="btn-record start" id="btn-rec" onclick="toggleRec()"><span class="dot" id="dot"></span>Iniciar grabación</button>
+          <span id="rec-hint" style="font-size:12px;color:var(--muted)"></span>
+        </div>
+        <div class="interim" id="interim"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd">📝 Notas de consulta</div>
+      <div class="card-bd">
+        <textarea id="notes" placeholder="Escribe aquí las notas de la consulta, o usa la grabación de voz arriba para dictarlas…" oninput="updateCount()"></textarea>
+        <div class="char-count" id="count">0 palabras · 0 caracteres</div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn-primary" id="btn-gen" onclick="generateSummary()">📄 Generar informe con IA</button>
+      <button class="btn-secondary" id="btn-copy" style="display:none" onclick="copyReport()">📋 Copiar informe</button>
+    </div>
+  </div>
+
+  <!-- Panel Resumen -->
+  <div class="tab-panel" id="panel-resumen">
+    <div class="card">
+      <div class="card-hd">📄 Informe Clínico generado por IA</div>
+      <div class="card-bd" id="summary-container">
+        <div class="empty"><div class="empty-icon">📄</div><p style="font-size:15px;color:var(--text2);margin-bottom:6px">Sin informe aún</p><p style="font-size:13px">Ve a Notas de consulta y presiona "Generar informe con IA".</p></div>
+      </div>
+    </div>
+    <div class="actions" id="summary-actions" style="display:none">
+      <button class="btn-secondary" id="btn-copy2" onclick="copyReport()">📋 Copiar informe</button>
+      <button class="btn-primary" onclick="generateSummary()">🔄 Regenerar</button>
+    </div>
+  </div>
+
+  <!-- Panel Traslado Sotero -->
+  <div class="tab-panel" id="panel-sotero">
+    <div class="card">
+      <div class="card-hd">&#127978; Informe de Traslado &mdash; Hospital S&#243;tero del R&#237;o</div>
+      <div class="card-bd">
+        <p style="font-size:13px;color:var(--text2);margin-bottom:18px">Solo campos obligatorios.</p>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div><label for="s-nombre">Nombre completo</label><input id="s-nombre" type="text" placeholder="Ej: Mar&#237;a Gonz&#225;lez L&#243;pez"/></div>
+          <div><label for="s-rut">RUT</label><input id="s-rut" type="text" placeholder="Ej: 12.345.678-9"/></div>
+          <div><label for="s-diagnostico">Diagn&#243;stico</label><textarea id="s-diagnostico" style="min-height:80px" placeholder="Diagn&#243;stico principal del paciente..."></textarea></div>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn-primary" onclick="copySotero()">&#128203; Copiar informe de traslado</button>
+      <span id="sotero-ok" style="font-size:13px;color:var(--green);display:none">&#10003; &#161;Copiado!</span>
+    </div>
+  </div>
+
+  <!-- Panel Traslado Posta Central -->
+  <div class="tab-panel" id="panel-posta">
+    <div class="card">
+      <div class="card-hd">&#128680; Informe de Traslado &mdash; Posta Central</div>
+      <div class="card-bd">
+        <p style="font-size:13px;color:var(--text2);margin-bottom:18px">Solo campos obligatorios.</p>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div><label for="p-nombre">Nombre completo</label><input id="p-nombre" type="text" placeholder="Ej: Mar&#237;a Gonz&#225;lez L&#243;pez"/></div>
+          <div><label for="p-rut">RUT</label><input id="p-rut" type="text" placeholder="Ej: 12.345.678-9"/></div>
+          <div><label for="p-edad">Edad</label><input id="p-edad" type="number" placeholder="45" min="0" max="150"/></div>
+          <div><label for="p-diagnostico">Diagn&#243;stico</label><textarea id="p-diagnostico" style="min-height:80px" placeholder="Diagn&#243;stico principal del paciente..."></textarea></div>
+          <div><label for="p-sintomas">S&#237;ntomas</label><textarea id="p-sintomas" style="min-height:80px" placeholder="Describir s&#237;ntomas presentes..."></textarea></div>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn-primary" onclick="copoPosta()">&#128203; Copiar informe de traslado</button>
+      <span id="posta-ok" style="font-size:13px;color:var(--green);display:none">&#10003; &#161;Copiado!</span>
+    </div>
+  </div>
+
+  </div> <!-- Cierre VISTA: Nuevo Paciente -->
+
+  <!-- VISTA: Historial -->
+  <div id="view-historial" style="display:none;flex-direction:column;gap:20px">
+    <div class="card">
+      <div class="card-hd">🕒 Pacientes atendidos hoy</div>
+      <div class="card-bd" id="historial-container">
+        <div class="loading fade">
+          <div class="dots"><div class="dot-l"></div><div class="dot-l"></div><div class="dot-l"></div></div>
+          <p class="loading-txt">Cargando historial…</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────
+let summaryData = null;
+let isRecording = false;
+let recognition = null;
+let timerInterval = null;
+let waveInterval = null;
+let seconds = 0;
+const NUM_BARS = 26;
+
+// ── Init waveform ──────────────────────────────────────
+const wf = document.getElementById('waveform');
+const bars = [];
+for(let i=0;i<NUM_BARS;i++){
+  const b = document.createElement('div');
+  b.className = 'bar';
+  b.style.height = '6px';
+  b.style.opacity = '.25';
+  wf.appendChild(b);
+  bars.push(b);
+}
+
+function animateBars(on){
+  if(on){
+    waveInterval = setInterval(()=>{
+      bars.forEach(b=>{
+        const h = Math.floor(Math.random()*50)+6;
+        b.style.height = h+'px';
+        b.style.opacity = '1';
+      });
+    }, 120);
+  } else {
+    clearInterval(waveInterval);
+    bars.forEach(b=>{b.style.height='6px';b.style.opacity='.25';});
+  }
+}
+
+// ── Tabs ───────────────────────────────────────────────
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>{p.classList.remove('active');p.style.display='none';});
+  document.getElementById('tab-'+tab).classList.add('active');
+  const panel = document.getElementById('panel-'+tab);
+  panel.classList.add('active');
+  panel.style.display='flex';
+  
+  if(tab === 'sotero') populateSotero();
+  if(tab === 'posta') populatePosta();
+}
+
+function populateSotero(){
+  const nombre = document.getElementById('nombre').value;
+  const rut    = document.getElementById('rut').value;
+  const edad   = document.getElementById('edad').value;
+  if(nombre) document.getElementById('s-nombre').value = nombre;
+  if(rut)    document.getElementById('s-rut').value    = rut;
+  if(edad)   document.getElementById('s-edad').value   = edad;
+  if(summaryData && summaryData.diagnostico) {
+    document.getElementById('s-diagnostico').value = summaryData.diagnostico.join(', ');
+  }
+}
+
+function populatePosta(){
+  const nombre = document.getElementById('nombre').value;
+  const rut    = document.getElementById('rut').value;
+  const edad   = document.getElementById('edad').value;
+  if(nombre) document.getElementById('p-nombre').value = nombre;
+  if(rut)    document.getElementById('p-rut').value    = rut;
+  if(edad)   document.getElementById('p-edad').value   = edad;
+  if(summaryData) {
+    if(summaryData.diagnostico) document.getElementById('p-diagnostico').value = summaryData.diagnostico.join(', ');
+    if(summaryData.sintomas) document.getElementById('p-sintomas').value = summaryData.sintomas.join(', ');
+  }
+}
+
+// init panel visibility
+document.getElementById('panel-notas').style.display='flex';
+document.getElementById('panel-resumen').style.display='none';
+document.getElementById('panel-sotero').style.display='none';
+document.getElementById('panel-posta').style.display='none';
+
+// ── Notes counter ──────────────────────────────────────
+function updateCount(){
+  const v = document.getElementById('notes').value;
+  const words = v.trim() ? v.trim().split(/\s+/).length : 0;
+  document.getElementById('count').textContent = words+' palabras · '+v.length+' caracteres';
+}
+
+// ── Voice recording ────────────────────────────────────
+function toggleRec(){
+  if(!isRecording) startRec(); else stopRec();
+}
+
+function startRec(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ alert('Tu navegador no soporta grabación de voz. Usa Chrome o Edge.'); return; }
+  recognition = new SR();
+  recognition.lang = 'es-CL';
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.onresult = e => {
+    let interim = '';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal){
+        document.getElementById('notes').value += e.results[i][0].transcript + ' ';
+        updateCount();
+      } else { interim += e.results[i][0].transcript; }
+    }
+    document.getElementById('interim').textContent = interim ? '🎤 '+interim : '';
+  };
+  recognition.onerror = e => { if(e.error!=='no-speech') stopRec(); };
+  recognition.onend = () => { if(isRecording) try{recognition.start()}catch(_){} };
+  recognition.start();
+  isRecording = true;
+  seconds = 0;
+  timerInterval = setInterval(()=>{ seconds++; const m=String(Math.floor(seconds/60)).padStart(2,'0'),s=String(seconds%60).padStart(2,'0'); document.getElementById('timer').textContent=m+':'+s; },1000);
+  document.getElementById('timer').className='timer on';
+  document.getElementById('btn-rec').className='btn-record stop';
+  document.getElementById('btn-rec').innerHTML='<span style="margin-right:6px">⏹</span>Detener';
+  document.getElementById('dot').className='dot blink';
+  document.getElementById('rec-hint').textContent='Hablando en español (Chile)…';
+  animateBars(true);
+}
+
+function stopRec(){
+  if(recognition){recognition.onend=null;recognition.stop();recognition=null;}
+  clearInterval(timerInterval);
+  isRecording = false;
+  document.getElementById('timer').className='timer';
+  document.getElementById('btn-rec').className='btn-record start';
+  document.getElementById('btn-rec').innerHTML='<span class="dot" id="dot"></span>Iniciar grabación';
+  document.getElementById('interim').textContent='';
+  document.getElementById('rec-hint').textContent='';
+  animateBars(false);
+}
+
+// ── Generate summary ───────────────────────────────────
+async function generateSummary(){
+  const notes = document.getElementById('notes').value.trim();
+  if(!notes){ alert('Escribe o dicta notas antes de generar el informe.'); return; }
+  switchTab('resumen');
+  summaryData = null;
+  document.getElementById('summary-actions').style.display='none';
+  document.getElementById('btn-copy').style.display='none';
+  document.getElementById('btn-copy2') && (document.getElementById('btn-copy2').className='btn-secondary');
+  showLoading();
+  try{
+    const reqBody = {
+      notas: notes,
+      nombre: document.getElementById('nombre').value,
+      edad: document.getElementById('edad').value,
+      rut: document.getElementById('rut').value,
+    };
+    const res = await fetch('/api/informe',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(reqBody)
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || 'Error del servidor');
+    summaryData = data;
+    renderSummary(data);
+
+    // Guardar en el historial
+    reqBody.informe = data;
+    await fetch('/api/pacientes', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(reqBody)
+    });
+
+    document.getElementById('summary-actions').style.display='flex';
+    document.getElementById('btn-copy').style.display='inline-flex';
+  } catch(err){
+    showError(err.message);
+  }
+}
+
+function showLoading(){
+  document.getElementById('summary-container').innerHTML=`
+    <div class="loading fade">
+      <div class="dots"><div class="dot-l"></div><div class="dot-l"></div><div class="dot-l"></div></div>
+      <p class="loading-txt">Generando informe clínico con IA…</p>
+    </div>`;
+}
+
+function showError(msg){
+  document.getElementById('summary-container').innerHTML=`
+    <div class="error-box fade"><span>⚠️</span><div><strong>Error al generar el informe</strong><p style="margin-top:4px;opacity:.85">${msg}</p></div></div>`;
+}
+
+function renderSummary(d){
+  const tags = (arr,cls, field)=> arr&&arr.length
+    ? arr.map((t, idx)=>`<span class="tag ${cls}">${t} <span class="tag-remove" onclick="removeTag('${field}', ${idx}, '${cls}')" title="Eliminar">&#10006;</span></span>`).join('')
+    : `<span style="color:var(--muted);font-size:13px" id="empty-${field}">No registrado</span>`;
+
+  const inputBlock = (field, cls, placeholder) => `
+    <div style="margin-top:8px;display:flex;gap:8px">
+      <input type="text" id="new-${field}" placeholder="${placeholder}" style="flex:1;font-size:13px;padding:6px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text)">
+      <button class="btn-secondary" onclick="addTag('${field}','${cls}')" style="padding:6px 12px;font-size:13px">A&#241;adir</button>
+    </div>`;
+
+  const block = (text) => `<div class="plan-box">${text||'\u2014'}</div>`;
+  document.getElementById('summary-container').innerHTML=`
+    <div class="summary fade">
+      <div><div class="s-title">&#127973; Motivo de consulta</div>${block(d.motivo_consulta)}</div>
+      <div><div class="s-title">&#128214; Historia de la enfermedad actual</div><p class="s-text">${d.historia_enfermedad||'\u2014'}</p></div>
+      
+      <div>
+        <div class="s-title">&#129298; S&#237;ntomas</div>
+        <div class="tags" id="sintomas-container">${tags(d.sintomas,'tag-a', 'sintomas')}</div>
+        ${inputBlock('sintomas', 'tag-a', 'Agregar s\u00edntoma manual...')}
+      </div>
+      
+      <div>
+        <div class="s-title">&#128203; Antecedentes relevantes</div>
+        <div class="tags" id="antecedentes-container">${tags(d.antecedentes,'tag-b', 'antecedentes')}</div>
+        ${inputBlock('antecedentes', 'tag-b', 'Agregar antecedente manual...')}
+      </div>
+      
+      <div>
+        <div class="s-title">&#128204; Temas a tratar</div>
+        <div class="tags" id="temas_a_tratar-container">${tags(d.temas_a_tratar,'tag-a', 'temas_a_tratar')}</div>
+        ${inputBlock('temas_a_tratar', 'tag-a', 'Agregar tema manual...')}
+      </div>
+      
+      <div>
+        <div class="s-title">&#128308; Diagn&#243;stico / Sospecha</div>
+        <div class="tags" id="diagnostico-container">${tags(d.diagnostico,'tag-r', 'diagnostico')}</div>
+        ${inputBlock('diagnostico', 'tag-r', 'Agregar diagn\u00f3stico manual...')}
+      </div>
+      
+      <div>
+        <div class="s-title">&#128138; Medicamentos</div>
+        <div class="tags" id="medicamentos-container">${tags(d.medicamentos,'tag-b', 'medicamentos')}</div>
+        ${inputBlock('medicamentos', 'tag-b', 'Agregar medicamento manual...')}
+      </div>
+      
+      <div><div class="s-title">&#128197; Plan de seguimiento</div>${block(d.plan)}</div>
+    </div>`;
+}
+
+// ── Copy report ────────────────────────────────────────
+async function copyReport(){
+  const nombre = document.getElementById('nombre').value||'No especificado';
+  const rut = document.getElementById('rut').value||'No especificado';
+  const edad = document.getElementById('edad').value;
+  const notes = document.getElementById('notes').value.trim();
+  const lines=['══════════════════════════════════','       INFORME DE CONSULTA MÉDICA','══════════════════════════════════',
+    `Fecha: ${new Date().toLocaleDateString('es-CL',{dateStyle:'long'})}`,'',
+    '── DATOS DEL PACIENTE ──────────',`Nombre: ${nombre}`,`RUT:    ${rut}`,`Edad:   ${edad?edad+' años':'No especificada'}`];
+  if(summaryData){
+    lines.push('','── MOTIVO DE CONSULTA ──────────',summaryData.motivo_consulta||'—');
+    if(summaryData.historia_enfermedad){lines.push('','── HISTORIA DE LA ENFERMEDAD ───',summaryData.historia_enfermedad);}
+    if(summaryData.sintomas?.length){lines.push('','── SÍNTOMAS ────────────────────');summaryData.sintomas.forEach(s=>lines.push('• '+s));}
+    if(summaryData.antecedentes?.length){lines.push('','── ANTECEDENTES ────────────────');summaryData.antecedentes.forEach(a=>lines.push('• '+a));}
+    if(summaryData.temas_a_tratar?.length){lines.push('','── TEMAS A TRATAR ──────────────');summaryData.temas_a_tratar.forEach(t=>lines.push('• '+t));}
+    if(summaryData.diagnostico?.length){lines.push('','── DIAGNÓSTICO ─────────────────');summaryData.diagnostico.forEach(d=>lines.push('• '+d));}
+    if(summaryData.medicamentos?.length){lines.push('','── MEDICAMENTOS ────────────────');summaryData.medicamentos.forEach(m=>lines.push('• '+m));}
+    if(summaryData.plan){lines.push('','── PLAN DE SEGUIMIENTO ─────────',summaryData.plan);}
+  }
+  if(notes){lines.push('','── NOTAS ORIGINALES ────────────',notes);}
+  lines.push('','\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550','Generado con MedNotas IA');
+  try{
+    await navigator.clipboard.writeText(lines.join('\n'));
+    ['btn-copy','btn-copy2'].forEach(id=>{
+      const b=document.getElementById(id);
+      if(b){b.innerHTML='&#10003; &#161;Copiado!';b.classList.add('success');setTimeout(()=>{b.innerHTML='&#128203; Copiar informe';b.classList.remove('success');},2500);}
+    });
+  } catch{alert('No se pudo copiar. El navegador requiere HTTPS para el portapapeles.');}
+}
+
+// ── Traslado Sotero del Rio ──────────────────────────────
+function copySotero(){
+  const nombre = document.getElementById('s-nombre').value.trim();
+  const rut    = document.getElementById('s-rut').value.trim();
+  const diag   = document.getElementById('s-diagnostico').value.trim();
+  if(!nombre || !rut || !diag){
+    alert('Por favor completa los campos obligatorios: Nombre, RUT y Diagnostico.');
+    return;
+  }
+  const fecha   = new Date().toLocaleDateString('es-CL',{dateStyle:'long'});
+  const hora    = new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
+  const lines = [
+    '\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550',
+    '   INFORME DE TRASLADO INTRAHOSPITALARIO',
+    '       Hospital Sotero del Rio',
+    '\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550',
+    `Fecha: ${fecha}   Hora: ${hora}`,'',
+    '\u2500\u2500 DATOS DEL PACIENTE \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500',
+    `Nombre: ${nombre}`,
+    `RUT:    ${rut}`,
+  ];
+  lines.push('','\u2500\u2500 DIAGNOSTICO \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500', diag);
+  lines.push('','\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550','Generado con MedNotas IA');
+  navigator.clipboard.writeText(lines.join('\n')).then(()=>{
+    const ok = document.getElementById('sotero-ok');
+    ok.style.display='inline'; setTimeout(()=>ok.style.display='none', 2500);
+  }).catch(()=>alert('No se pudo copiar.'));
+}
+
+// ── Traslado Posta Central ──────────────────────────────
+function copoPosta(){
+  const nombre  = document.getElementById('p-nombre').value.trim();
+  const rut     = document.getElementById('p-rut').value.trim();
+  const edad    = document.getElementById('p-edad').value.trim();
+  const diag    = document.getElementById('p-diagnostico').value.trim();
+  const sint    = document.getElementById('p-sintomas').value.trim();
+  if(!nombre || !rut || !edad || !diag || !sint){
+    alert('Por favor completa todos los campos obligatorios: Nombre, RUT, Edad, Diagnostico y Sintomas.');
+    return;
+  }
+  const fecha  = new Date().toLocaleDateString('es-CL',{dateStyle:'long'});
+  const hora   = new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
+  const lines = [
+    '\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550',
+    '   INFORME DE TRASLADO EXTRAHOSPITALARIO',
+    '              Posta Central',
+    '\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550',
+    `Fecha: ${fecha}   Hora: ${hora}`,'',
+    '\u2500\u2500 DATOS DEL PACIENTE \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500',
+    `Nombre: ${nombre}`,
+    `RUT:    ${rut}`,
+    `Edad:   ${edad} annos`,'',
+    '\u2500\u2500 DIAGNOSTICO \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500', diag,'',
+    '\u2500\u2500 SINTOMAS \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500', sint,
+  ];
+  lines.push('','\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550','Generado con MedNotas IA');
+  navigator.clipboard.writeText(lines.join('\n')).then(()=>{
+    const ok = document.getElementById('posta-ok');
+    ok.style.display='inline'; setTimeout(()=>ok.style.display='none', 2500);
+  }).catch(()=>alert('No se pudo copiar.'));
+}
+
+// ── Historial y Navegación ──────────────────────────────
+let globalHistory = [];
+
+function switchMainView(view){
+  document.querySelectorAll('.top-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('nav-'+view).classList.add('active');
+  if(view === 'nuevo'){
+    document.getElementById('view-nuevo').style.display='flex';
+    document.getElementById('view-historial').style.display='none';
+  } else {
+    document.getElementById('view-nuevo').style.display='none';
+    document.getElementById('view-historial').style.display='flex';
+    loadHistory();
+  }
+}
+
+function clearForm(){
+  if(!confirm('¿Seguro que quieres limpiar todos los datos para empezar un nuevo paciente?')) return;
+  document.getElementById('nombre').value = '';
+  document.getElementById('rut').value = '';
+  document.getElementById('edad').value = '';
+  document.getElementById('notes').value = '';
+  updateCount();
+  summaryData = null;
+  document.getElementById('summary-container').innerHTML = `
+    <div class="empty"><div class="empty-icon">📄</div><p style="font-size:15px;color:var(--text2);margin-bottom:6px">Sin informe aún</p><p style="font-size:13px">Ve a Notas de consulta y presiona "Generar informe con IA".</p></div>`;
+  document.getElementById('summary-actions').style.display='none';
+  document.getElementById('btn-copy').style.display='none';
+  switchTab('notas');
+}
+
+async function loadHistory(){
+  const container = document.getElementById('historial-container');
+  container.innerHTML = `
+    <div class="loading fade">
+      <div class="dots"><div class="dot-l"></div><div class="dot-l"></div><div class="dot-l"></div></div>
+      <p class="loading-txt">Cargando historial…</p>
+    </div>`;
+  try {
+    const res = await fetch('/api/pacientes');
+    const data = await res.json();
+    globalHistory = data;
+    if(data.length === 0){
+      container.innerHTML = '<div class="empty" style="padding:40px 20px"><p style="color:var(--muted)">No hay pacientes atendidos hoy.</p></div>';
+      return;
+    }
+    let html = '<div class="hist-list">';
+    data.forEach((p, i) => {
+      const nom = p.nombre && p.nombre !== 'No especificado' ? p.nombre : 'Paciente sin nombre';
+      const r = p.rut && p.rut !== 'No especificado' ? p.rut : '—';
+      const e = p.edad || '—';
+      html += `
+        <div class="hist-item" onclick="viewPatient(${i})">
+          <div>
+            <div class="hist-name">${nom}</div>
+            <div class="hist-meta"><span>RUT: ${r}</span><span>Edad: ${e}</span></div>
+          </div>
+          <div style="font-size:12px;color:var(--muted)">${p.fecha}</div>
+        </div>`;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+  } catch(e) {
+    container.innerHTML = '<div class="error-box">Error al cargar el historial.</div>';
+  }
+}
+
+function viewPatient(index){
+  const p = globalHistory[index];
+  if(!p) return;
+  document.getElementById('nombre').value = p.nombre !== 'No especificado' ? p.nombre : '';
+  document.getElementById('rut').value = p.rut !== 'No especificado' ? p.rut : '';
+  document.getElementById('edad').value = p.edad || '';
+  document.getElementById('notes').value = p.notas || '';
+  updateCount();
+  summaryData = p.informe;
+  renderSummary(p.informe);
+  document.getElementById('summary-actions').style.display='flex';
+  document.getElementById('btn-copy').style.display='inline-flex';
+  switchMainView('nuevo');
+  switchTab('resumen');
+}
+
+function renderFieldTags(field, cls) {
+  if(!summaryData) return;
+  const container = document.getElementById(field + '-container');
+  if(!container) return;
+  
+  const arr = summaryData[field];
+  if(arr && arr.length > 0) {
+    container.innerHTML = arr.map((t, idx) => `<span class="tag ${cls}">${t} <span class="tag-remove" onclick="removeTag('${field}', ${idx}, '${cls}')" title="Eliminar">&#10006;</span></span>`).join('');
+  } else {
+    container.innerHTML = `<span style="color:var(--muted);font-size:13px" id="empty-${field}">No registrado</span>`;
+  }
+}
+
+function addTag(field, cls) {
+  if(!summaryData) return;
+  const input = document.getElementById('new-' + field);
+  const val = input.value.trim();
+  if(!val) return;
+  
+  if(!summaryData[field]) summaryData[field] = [];
+  summaryData[field].push(val);
+  
+  input.value = '';
+  renderFieldTags(field, cls);
+}
+
+function removeTag(field, idx, cls) {
+  if(!summaryData || !summaryData[field]) return;
+  summaryData[field].splice(idx, 1);
+  renderFieldTags(field, cls);
+}
+</script>
+</body>
+</html>
