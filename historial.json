@@ -1,0 +1,228 @@
+[
+  {
+    "id": "8cbf58de-9290-497c-a8b9-9dea14b97aca",
+    "fecha": "2026-04-30 20:39:21",
+    "nombre": "cangri",
+    "rut": "696969696",
+    "edad": "38",
+    "notas": "paciente masculino lo traen por herida de arma de fuego el compadre dice que fue un asalto ingresa consciente pero agitado y pálido saturando 89%, presionen 9060 y frecuencia cardíaca de 130 se le instaló vía de venosa de inmediato y se pasaron 2 litros de suero fisiológico al revisarlo tiene un orificio de entrada en el emitórax derecho a nivel del quinto espacio intercostal sin orificio de salida a la auscultación hay disminución del murmullo vesicular en ese lado le hicimos una ecofast y salió positiva para líquido libre en el tórax el cirujano de turno lo habló y lo instaló un tubo pleural del cual drenaron 800 cc de sangre fresca sobre su antecedentes el paciente nos cuenta que asmático es de chico y que es salbutamol  y que usa Salbutamol de vez en cuando fuma con una cajetilla al día y admite consumo ocasional de marihuana nos dijo que es alérgico a la penicilina le dio un shock anafilactico hace años también nos mencionó que lo operaron de apendicitis cuando tenía 15 después de la instalación del tubo y pasarle dos unidades de glóbulos rojos su presión mejoró a 110 sobre 70 le dejamos analgesia con fentanilo  Pero sigue sangrando un poco por el tubo el diagnóstico actual es hemotórax derecho traumático por p AF proyectil de arma de fuego y shock hipovolémico compensado como nosotros no tenemos cirujano de tórax de llamada la indicación ahora es traslado urgente a centro de mayor complejidad para exploración quirúrgica y manejo en UCI  que no se olvide seguir con las Transfusión si baja la presión durante el traslado",
+    "informe": {
+      "antecedentes": [
+        "asma desde la infancia",
+        "uso de salbutamol",
+        "fumador de una cajetilla al día",
+        "consumo ocasional de marihuana",
+        "alergia a la penicilina",
+        "apendicitis operada a los 15 años"
+      ],
+      "diagnostico": [
+        "hemotórax derecho traumático por proyectil de arma de fuego",
+        "shock hipovolémico compensado"
+      ],
+      "historia_enfermedad": "El paciente ingresa consciente pero agitado y pálido, con una saturación de oxígeno del 89%, presión arterial de 90/60 mmHg y frecuencia cardíaca de 130 ppm. Presenta un orificio de entrada en el hemitórax derecho a nivel del quinto espacio intercostal sin orificio de salida. La auscultación muestra disminución del murmullo vesicular en ese lado. Se realizó una ecofast que resultó positiva para líquido libre en el tórax. Se instaló un tubo pleural y se drenaron 800 cc de sangre fresca.",
+      "medicamentos": [
+        "salbutamol",
+        "fentanilo",
+        "glóbulos rojos",
+        "suero fisiológico"
+      ],
+      "motivo_consulta": "El paciente asiste a la consulta por una herida de arma de fuego en el tórax derecho, como resultado de un asalto.",
+      "plan": "Traslado urgente a centro de mayor complejidad para exploración quirúrgica y manejo en UCI. Continuar con transfusiones si la presión arterial disminuye durante el traslado.",
+      "sintomas": [
+        "agitación",
+        "palidez",
+        "disminución del murmullo vesicular"
+      ],
+      "temas_a_tratar": [
+        "hemotórax derecho traumático",
+        "shock hipovolémico compensado"
+      ]
+    }
+  },
+  {
+    "id": "7397c69f-c008-4074-9ccd-ac2f2056296f",
+    "fecha": "2026-04-30 20:22:15",
+    "nombre": "Dante chavo arepas",
+    "rut": "276767677",
+    "edad": "58",
+    "notas": "el paciente ingresa por un cuadro de dolor torácico opresivo de inicio súbito hace 2 horas irradiado a mandíbula y brazo izquierdo asociado diáforesis profusa en los antecedentes Don Ricardo e hipertenso crónico tratado con Enalapril de 10 mg cada 12 horas y diabético tipo 2 en tratamiento con metformina tiene una alergia conocida a la penicilina que le da rash cutáneo fue operado de colecistectomía hace 5 años respecto a sus hábitos fuma cerca de media cajetilla diaria hace 20 años y consume alcohol de forma social los fines de semana niega uso de otras drogas durante la evolución aquí en urgencia se le realizó un sg que muestra super desnivel del segmento St en pared anterior se administró carga de aspirina 300 mg y clópidogrel 300 mg además de nitroglicerina  sublingual con respuesta parcial al dolor actualmente estable pero requiere traslado urgente a hemodinamia para angioplastia primaria",
+    "informe": {
+      "antecedentes": [
+        "Hipertensión crónica",
+        "Diabetes tipo 2",
+        "Alergia a la penicilina",
+        "Colecistectomía hace 5 años",
+        "Fumador crónico",
+        "Consumo de alcohol de forma social"
+      ],
+      "diagnostico": [
+        "Sospecha de infarto de miocardio"
+      ],
+      "historia_enfermedad": "El paciente presenta un cuadro de dolor torácico opresivo de inicio súbito hace 2 horas, que se irradió a la mandíbula y brazo izquierdo y se asoció con diáforesis profusa. El paciente tiene antecedentes de hipertensión crónica y diabetes tipo 2, y está en tratamiento con Enalapril y metformina. También tiene una alergia conocida a la penicilina.",
+      "medicamentos": [
+        "Enalapril 10 mg cada 12 horas",
+        "Metformina",
+        "Aspirina 300 mg",
+        "Clópidogrel 300 mg",
+        "Nitroglicerina sublingual"
+      ],
+      "motivo_consulta": "El paciente asiste a la consulta por un cuadro de dolor torácico opresivo de inicio súbito. El dolor se irradió a la mandíbula y brazo izquierdo y se asoció con diáforesis profusa.",
+      "plan": "El paciente requiere traslado urgente a hemodinamia para angioplastia primaria. Se deben realizar estudios de seguimiento para evaluar la evolución del paciente y ajustar el tratamiento según sea necesario.",
+      "sintomas": [
+        "Dolor torácico opresivo",
+        "Irradiación del dolor a la mandíbula y brazo izquierdo",
+        "Diáforesis profusa"
+      ],
+      "temas_a_tratar": [
+        "Evaluación y manejo del dolor torácico",
+        "Control de la hipertensión y la diabetes",
+        "Alergia a la penicilina"
+      ]
+    }
+  },
+  {
+    "id": "0b097cf9-4333-4b41-9ded-6f3316884e68",
+    "fecha": "2026-04-30 20:15:27",
+    "nombre": "Maria gonzalez lopez",
+    "rut": "123456789",
+    "edad": "45",
+    "notas": "el nombre del paciente es María González López con Ruth 12345 678 - 9 edad tiene 45 años presenta dolor estomacal dolor de cabeza y 37 grados de temperatura",
+    "informe": {
+      "antecedentes": [],
+      "diagnostico": [],
+      "historia_enfermedad": "El paciente presenta dolor estomacal y dolor de cabeza, con una temperatura de 37 grados, sin información adicional sobre la evolución o duración de los síntomas",
+      "medicamentos": [],
+      "motivo_consulta": "El paciente asiste a la consulta por dolor estomacal y dolor de cabeza",
+      "plan": "",
+      "sintomas": [
+        "Dolor estomacal",
+        "Dolor de cabeza",
+        "Fiebre (37 grados)"
+      ],
+      "temas_a_tratar": [
+        "Dolor estomacal",
+        "Dolor de cabeza",
+        "Fiebre"
+      ]
+    }
+  },
+  {
+    "id": "4530b481-b3a1-4fe0-896a-c6101d7d156b",
+    "fecha": "2026-04-30 20:13:21",
+    "nombre": "",
+    "rut": "",
+    "edad": "",
+    "notas": "el nombre del paciente es María González López con Ruth 12345 678 - 9 edad tiene 45 años presenta dolor estomacal dolor de cabeza y 37 grados de temperatura",
+    "informe": {
+      "RUT": "12345-678-9",
+      "antecedentes": [],
+      "diagnostico": [
+        "no se ha establecido un diagnostico confirmado"
+      ],
+      "edad": 45,
+      "historia_enfermedad": "La paciente presenta dolor estomacal y dolor de cabeza, con una temperatura de 37 grados, sin antecedentes ni contexto relevante proporcionados",
+      "medicamentos": [],
+      "motivo_consulta": "El paciente asiste a la consulta por presentar dolor estomacal y dolor de cabeza",
+      "nombre": "María González López",
+      "plan": "se solicitaran examenes de laboratorio y se programara una cita de seguimiento para evaluar la evolucion de los sintomas",
+      "sintomas": [
+        "dolor estomacal",
+        "dolor de cabeza",
+        "fiebre de 37 grados"
+      ],
+      "temas_a_tratar": [
+        "evaluación y manejo del dolor estomacal y dolor de cabeza",
+        "control de la fiebre"
+      ]
+    }
+  },
+  {
+    "id": "cf3507a0-3cf4-478c-ba4f-e2393fadbd80",
+    "fecha": "2026-04-30 20:11:44",
+    "nombre": "",
+    "rut": "",
+    "edad": "",
+    "notas": "paciente con dolor estomacal",
+    "informe": {
+      "antecedentes": [],
+      "diagnostico": [
+        "no se ha establecido un diagnostico confirmado"
+      ],
+      "historia_enfermedad": "El paciente presenta un dolor estomacal, sin embargo, no se cuenta con informacion detallada sobre la evolucion, duracion y contexto relevante de la enfermedad actual.",
+      "medicamentos": [],
+      "motivo_consulta": "El paciente asiste a la consulta debido a un dolor estomacal, el cual ha sido la razon principal de su visita.",
+      "plan": "se solicitaran examenes de laboratorio y se programara una interconsulta con gastroenterologia, se indicara al paciente realizar una dieta blanda y se programara una proxima cita para evaluar la evolucion del dolor estomacal",
+      "sintomas": [
+        "dolor estomacal"
+      ],
+      "temas_a_tratar": [
+        "evaluacion y manejo del dolor estomacal"
+      ]
+    }
+  },
+  {
+    "id": "616c9d86-2858-4401-a6b3-2721cb36ed51",
+    "fecha": "2026-04-30 19:33:45",
+    "nombre": "jose puentes",
+    "rut": "21589320k",
+    "edad": "17",
+    "notas": "Pcte femenino 17a traída por madre, consulta por disnea progresiva 3hrs evolución. Refiere sibilancias audibles, tos seca persistente, opresión torácica. Antecedente asma bronquial desde los 8 años, mal controlada, último uso salbutamol hace 2hrs sin respuesta adecuada. Sin uso de corticoide inhalado regular. Alérgica a ibuprofeno (urticaria). Sin hospitaliz. previas por asma. Niega fiebre, no rinorrea, no dolor faríngeo.\nPosible gatillante: exposición a pelo de gato en casa de amiga ayer tarde.\nAl examen: Pcte ansiosa, taquipneica. T° 36.9°C, FC 112 reg, FR 26x', PA 110/70, SatO2 91% aire amb. Uso musculatura accesoria ++, tiraje subcostal leve. MP disminuido globalmente, sibilancias espiratorias difusas bilaterales. Sin estridor.\nClasificación crisis: MODERADA-SEVERA.\nManejo inmediato: O2 por mascarilla 35% para SatO2 >94%. Salbutamol NBZ 2.5mg + Ipratropio 0.5mg x3 dosis c/20min. Metilprednisolona 1mg/kg EV (50mg). Monitorización continua.\nReevaluación 1hr: SatO2 96%, FR 20x', sibilancias reducidas, paciente más tranquila.\nSe decide hospitalización en observación 12-24hrs. Se educa a madre sobre adherencia a tratamiento controlador y plan de acción escrito para crisis. Se deriva a policlínico broncopulmonar infantil al alta.",
+    "informe": {
+      "antecedentes": [
+        "Asma bronquial desde los 8 años",
+        "Alergica a ibuprofeno (urticaria)"
+      ],
+      "diagnostico": [
+        "Crisis asmática moderada-severa"
+      ],
+      "historia_enfermedad": "Paciente de 17 años con antecedente de asma bronquial mal controlada desde los 8 años, último uso de salbutamol hace 2 horas sin respuesta adecuada, posible gatillante exposición a pelo de gato en casa de amiga ayer tarde",
+      "medicamentos": [
+        "Salbutamol 2.5mg",
+        "Ipratropio 0.5mg",
+        "Metilprednisolona 50mg"
+      ],
+      "motivo_consulta": "Disnea progresiva de 3 horas de evolución con sibilancias audibles, tos seca persistente y opresión torácica",
+      "plan": "Hospitalización en observación 12-24 horas, educación a la madre sobre adherencia a tratamiento controlador y plan de acción para crisis, derivación a policlínico broncopulmonar infantil al alta",
+      "sintomas": [
+        "Disnea",
+        "Sibilancias audibles",
+        "Tos seca persistente",
+        "Opresión torácica"
+      ],
+      "temas_a_tratar": [
+        "Control de asma",
+        "Adherencia a tratamiento controlador",
+        "Plan de acción para crisis"
+      ]
+    }
+  },
+  {
+    "id": "117b8536-ce14-42e3-8a2b-55486aee9f0e",
+    "fecha": "2026-04-30 19:29:53",
+    "nombre": "Rodolfo carter",
+    "rut": "123456789",
+    "edad": "36",
+    "notas": "Pcte masculino 34a consulta por dolor abd cuadrante inferior derecho 12hrs evolución. Inicio insidioso, progresivo, intensidad actual 8/10 EVA. Náuseas +, vómito x1, sin fiebre subjetiva. Última deposición ayer normal. Sin cirugías previas. Sin alergias conocidas. No medicamentos habituales.\nAl examen: BEG, afebril 37.8°C, PA 118/74, FC 92 reg, SatO2 99% aire amb. Abdomen blando, doloroso a palpación FID, Blumberg +, Rovsing +, Psoas + derecho. RHA presentes disminuidos.\nSe solicita HMG, PCR, ELP, fx renal, orina completa, eco abdominal urgente. Se instala VVP, SF 500cc en bolo. Analgesia: Ketorolaco 30mg EV + Ondansetrón 4mg EV.\nEco: líquido libre periapendicular, apéndice no compresible 9mm diámetro.\nImpresión diagnóstica: Apendicitis aguda complicada probable.\nSe contacta cirugía de turno. Paciente en ayuno. Consentimiento informado firmado. Pabellón solicitado.",
+    "informe": {
+      "antecedentes": [],
+      "diagnostico": [
+        "Apendicitis aguda complicada probable"
+      ],
+      "historia_enfermedad": "El paciente inició con dolor abdominal en el cuadrante inferior derecho de manera insidiosa y progresiva, con una intensidad actual de 8/10 en la escala de evaluación del dolor. El dolor comenzó hace 12 horas y se ha acompañado de náuseas y un episodio de vómito, sin fiebre subjetiva. La última deposición fue normal y ocurrió el día anterior. No se reportan cirugías previas, alergias conocidas, ni medicamentos habituales.",
+      "medicamentos": [
+        "Ketorolaco 30mg EV",
+        "Ondansetrón 4mg EV"
+      ],
+      "motivo_consulta": "Dolor abdominal en el cuadrante inferior derecho con 12 horas de evolución",
+      "plan": "Se solicita HMG, PCR, ELP, fx renal, orina completa, eco abdominal urgente. Se instala VVP, SF 500cc en bolo. Analgesia con Ketorolaco y Ondansetrón. Se contacta cirugía de turno para posible intervención quirúrgica. Paciente en ayuno y con consentimiento informado firmado.",
+      "sintomas": [
+        "Dolor abdominal en el cuadrante inferior derecho",
+        "Náuseas",
+        "Vómito"
+      ],
+      "temas_a_tratar": [
+        "Apendicitis aguda complicada"
+      ]
+    }
+  }
+]
