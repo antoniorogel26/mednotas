@@ -28,7 +28,7 @@ def save_historial(data):
 
 @app.route("/")
 def index():
-    return send_from_directory("templates", "index.html")
+    return render_template("index.html")
 
 @app.route("/api/informe", methods=["POST"])
 def informe():
