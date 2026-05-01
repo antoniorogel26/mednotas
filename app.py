@@ -1,5 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory
-from groq import Groq
+from flask import Flask, request, jsonify, render_templatefrom groq import Groq
 from dotenv import load_dotenv
 import os
 import json
